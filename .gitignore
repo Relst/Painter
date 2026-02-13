@@ -1,0 +1,17 @@
+# virtual env
+venv/
+.env/
+
+# pycache
+__pycache__/
+*.pyc
+
+# PyCharm
+.idea/
+
+# macOS
+.DS_Store
+
+*.png
+
+simple_test.py
