@@ -36,13 +36,37 @@ def read_png(path: Path) -> SimpleFile:
     data = np.array(img)
     h, w, _ = data.shape
 
+
     sf = SimpleFile(path.stem, w, h, filetype="png")
     layer = sf.add_layer()
-
     with layer.unlocked():
-        # Convert 8-bit → uint16 internal format
         data16 = (data.astype(np.float32) / 255 * np.iinfo(layer.dtype).max).astype(layer.dtype)
-        layer[:, :, :] = data16
+        layer[:] = center_pad_to_shape(data16, layer.height, layer.width)
+
+    print("sflayers", sf.layers)
 
     return sf
 
+
+
+
+def center_pad_to_shape(img, target_h, target_w):
+    img_h, img_w = img.shape[:2]
+
+    # Crop center
+    y1 = max(0, (img_h - target_h) // 2)
+    x1 = max(0, (img_w - target_w) // 2)
+    img = img[y1:y1 + min(img_h, target_h),
+              x1:x1 + min(img_w, target_w)]
+
+    # Pad center
+    pad_y = target_h - img.shape[0]
+    pad_x = target_w - img.shape[1]
+
+    return np.pad(
+        img,
+        ((pad_y // 2, pad_y - pad_y // 2),
+         (pad_x // 2, pad_x - pad_x // 2),
+         (0, 0)),
+        mode="constant", constant_values=np.iinfo(img.dtype).max
+    )

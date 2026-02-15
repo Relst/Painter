@@ -5,7 +5,7 @@ from PyQt6.QtCore import QPoint
 from Painter.simple_file import SimpleFile
 from Painter.file_manager import FileManager
 from Painter.formats.ksp import read_ksp, write_ksp
-from Painter.formats.png import read_png, write_png
+from Painter.formats.png import read_png, write_png, center_pad_to_shape
 
 
 class PaintAppManager:
@@ -65,7 +65,11 @@ class PaintAppManager:
         if not path.is_absolute():
             path = self._save_dir / path
 
-        self._file_ref = SimpleFile.load(path)
+        new_file_ref = SimpleFile.load(path)
+        self._file_ref.canvas.layers.clear()
+        self._file_ref.add_layer()
+        self._file_ref.canvas.active_layer[:] = center_pad_to_shape(new_file_ref.canvas.active_layer.pixels,
+                                                                    self._file_ref.height, self._file_ref.width)
         return self._file_ref
 
     def save_document(self, path: str | Path | None = None) -> Path:

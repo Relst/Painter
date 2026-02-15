@@ -74,7 +74,7 @@ class SimpleFile:
 
     # ---------- Convenience layer methods ----------
 
-    def add_layer(self, layer: Layer = None) -> None:
+    def add_layer(self, layer: Layer = None) -> Layer:
         return self.canvas.add_layer(layer)
 
     def create_layers(self, count: int):

@@ -77,8 +77,8 @@ class Layer:
     def dtype(self):
         return self._dtype
 
-    @requires_unlocked
     @dtype.setter
+    @requires_unlocked
     def dtype(self, dtype: np.dtype):
         """
         Change underlying dtype and convert existing data.
